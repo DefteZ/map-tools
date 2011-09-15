@@ -85,8 +85,8 @@ def splitA4All(map_image):
 
 	print init_coord
 
-	by_width=1
-	by_height=1
+	#by_width=1
+	#by_height=1
 	for i in range(by_width):
 		xcoord = i*a4width #+ init_coord[1]
 		for j in range(by_height):
@@ -94,11 +94,11 @@ def splitA4All(map_image):
 			#print (xcoord,ycoord,a4width,a4height)
 			wgsLeft = m.getWGS84Coord(xcoord,ycoord)
 			wgsRight = m.getWGS84Coord(xcoord+a4width,ycoord)
-			
+			wgsDelta = wgsLeft[0]*60-int(wgsLeft[0]*60)
 			koef = m.getPixelForMinuteLat()/m.getPixelForMinuteLon()
-			print koef
+			#print koef
 			rotateAngle = math.atan((-wgsLeft[1]+wgsRight[1])/((-wgsLeft[0]+wgsRight[0])*koef))
-			print rotateAngle
+			#print rotateAngle
 			savepath = os.path.join(os.path.dirname(map_image),str(j) + "_" +str(i) + ".jpg")
 			
 			newIm = Image.new('RGBA',(a4width+52,a4height+52))
@@ -107,8 +107,9 @@ def splitA4All(map_image):
 			im = im.rotate((180/math.pi)*rotateAngle,expand=True)
 			newIm.paste(im,(26,26))
 			newIm.save(savepath)
-			image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat())
-			image_operator.drawYCoordinatePlank(savepath, int(m.getPixelForKilometer()*1.8520))
+			print wgsDelta
+			image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat(),init_coord=26+wgsDelta*m.getPixelForMinuteLon())
+			image_operator.drawYCoordinatePlank(savepath, int(m.getPixelForKilometer()*1.8520),init_coord=26)
 			#newIm=Image.open(savepath)
 			#draw = ImageDraw.Draw(newIm)
 			#pix = m.getPixelCoord(wgsLeft[0],wgsLeft[1])
@@ -126,4 +127,4 @@ def splitA4All(map_image):
 def splitA4One(map_image, coord):
 	pass	
  	
-#splitA4All("/home/privezentsev/kodar-1km.tif")
+splitA4All("/home/privezentsev/kodar-1km.tif")
