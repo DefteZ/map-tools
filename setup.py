@@ -1,10 +1,10 @@
 from distutils.core import setup
-import py2exe
 
 setup(
-    console = ["addminimap"],
-    options = {"py2exe" : {
-        
-        'includes': 'gdal'
-    }}
+	name="maptools",
+	version ="0.0.1",
+	author_email = "privezentsev@gmail.com",
+	packages = ["maptools"],
+	scripts = ["addminimap","splitmap"]    	
+    
 )
