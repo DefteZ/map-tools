@@ -178,3 +178,61 @@ def _crop(image, coord, save_path):
 	box = (coord[0],coord[1],coord[2],coord[3])
 	im_crop = im_raw.crop(box)
 	im_crop.save(save_path)
+
+
+def drawXCoordinatePlank(image, pixelMinute, init_coord = 0):
+	im_raw =  Image.open(image)
+	draw = ImageDraw.Draw(im_raw)
+	
+	tenpix = int(pixelMinute/6)
+	for i in range(int(im_raw.size[0]-init_coord/pixelMinute)+1)[1:]:
+		xcoord = i*pixelMinute+init_coord
+		if xcoord >= pixelMinute:
+			 
+			f = 0
+			if i%2==0:
+				f = _uint(0xffffffff)
+			else:
+				f = _uint(0xff888888)
+			
+			draw.line((xcoord-pixelMinute,0,xcoord,0),fill=f,width=50)
+
+			for i in range(6):
+				pointx = xcoord - pixelMinute + i*tenpix
+				draw.rectangle((pointx-1,10,pointx+1,20), fill=_uint(0xff0000ff))
+
+
+	del draw
+	
+	im_raw.save(image)
+
+def drawYCoordinatePlank(image, pixelMinute, init_coord= 0):
+	im_raw =  Image.open(image)
+	draw = ImageDraw.Draw(im_raw)
+	
+	tenpix = int(pixelMinute/6)
+	
+	for i in range(int(im_raw.size[1]-init_coord/pixelMinute)+1)[1:]:
+		xcoord = i*pixelMinute+init_coord
+		if xcoord >= pixelMinute:
+			 
+			f = 0
+			if i%2==0:
+				f = _uint(0xffffffff)
+			else:
+				f = _uint(0xff888888)
+			#print f
+			draw.line((0, xcoord-pixelMinute,0,xcoord),fill=f,width=50)
+
+			for i in range(6):
+				pointx = xcoord - pixelMinute + i*tenpix
+				draw.rectangle((10, pointx-1,20,pointx+1), fill=_uint(0xff0000ff))
+
+
+	del draw
+	
+	im_raw.save(image)
+
+			
+drawXCoordinatePlank("/home/privezentsev/0_3.jpg",100, init_coord=50)
+drawYCoordinatePlank("/home/privezentsev/test.jpg",100, init_coord=50)
