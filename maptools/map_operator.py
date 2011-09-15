@@ -64,7 +64,10 @@ class Map():
 	def getPath(self):
 		return self.path
 	def getWGS84Coord(self,x,y):
-		pass
+		raw_coord = (x*(self.maxx-self.minx)/self.width+self.minx,\
+					y*(self.maxy-self.miny)/self.height+self.miny)
+		return self.reversetransform.TransformPoint(raw_coord[0],raw_coord[1])[:-1]
+			
 	def getPixelCoord(self, lan, lat):
 		#print self.transform
 		
@@ -86,9 +89,17 @@ class Map():
 		modCoordMin = (self.coordMin[0]+float(1)/60, self.coordMin[1])
 		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
+	def getPixelForMinuteLon(self):
+		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMin[1])
+		modCoordMin = (self.coordMin[0], self.coordMin[1] + float(1)/60)
+		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
+		
+		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
+
 
 		#endPixel  = getPixelCoord()
 m = Map("/home/privezentsev/kodar-1km.tif")
 m.getPixelForKilometer()
+print m.getWGS84Coord(1000,0)
 	
 
