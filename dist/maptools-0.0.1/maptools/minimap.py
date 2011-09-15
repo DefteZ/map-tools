@@ -35,10 +35,8 @@ def split_by_gpx(map_img,gpx_file,utc_zone):
 				pt.time = pt.time + datetime.timedelta(hours=int(utc_zone))
 
 				if (pt.time.day - cur_day.time.day) != 0:
-					image_operator.crop_path(map_img, \
-											 ptcoord_list,
-								             os.path.join(os.curdir, split_dir, \
-														  track.name + "_" + str(cur_day.time.month) + "_" + str(cur_day.time.day) + ".jpg"))
+					image_operator.crop_path(map_img, ptcoord_list, os.curdir + "/" + split_dir + "/" + \
+					track.name + "_" + str(cur_day.time.month) + "_" + str(cur_day.time.day) + ".jpg")
 					cur_day = pt
 					ptcoord_list = []
 					ptcoord_list.append(map_info.getPixelCoord(pt.lon,pt.lat))
@@ -47,24 +45,24 @@ def split_by_gpx(map_img,gpx_file,utc_zone):
 
 def minimap_create(map_img,dir_path):
 	"""Create minimap on the corner of photo"""
-	mod = "mod"
+	mod = "mod/"
 	tiff = map_operator.Map(map_img)
 	
 	geo = image_operator.GeoExifCollector(dir_path)
-	if not os.path.exists(os.path.join(dir_path, mod)):
-		os.mkdir(os.path.join(dir_path, mod))
+	if not os.path.exists(mod):
+		os.mkdir(mod)
 	for f in geo.getImagesFiles():
 		
 		wgsc = geo.getWGS84Coord(f)
 		
-		minimap_path = image_operator.minimap(f, tiff.getPath(), tiff.getPixelCoord(wgsc[0],wgsc[1]))
-		target_path = os.path.join(dir_path, mod, os.path.basename(minimap_path))
+		path = image_operator.minimap(f, tiff.getPath(), tiff.getPixelCoord(wgsc[0],wgsc[1]))
+		full_path = dir_path + mod + path
 		
 
 
-		if os.path.exists(target_path):
-			os.remove(target_path)
-		shutil.move(minimap_path, os.path.join(dir_path,mod))
+		if os.path.exists(full_path):
+			os.remove(full_path)
+		shutil.move(path, dir_path + mod)
 
 			
 	

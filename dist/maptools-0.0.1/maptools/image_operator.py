@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import os
+import pyexiv2
+
 import shutil
 import gdal
 import osr
@@ -21,12 +23,12 @@ class GeoExifCollector():
 		images = filter(isJPG,  os.listdir(dirpath))
 
 		for f in images:
-			image_path = os.path.join(dirpath,f)
-			exif_data = self._get_exif_data(Image.open(image_path))
+			
+			exif_data = self._get_exif_data(Image.open(dirpath + "/" + f))
 		
 			point =  self._get_lat_lon(exif_data)
 			if not None in point:
-				self.points[image_path]=point
+				self.points[dirpath + "/" + f]=point
 			
 				
 	def _get_exif_data(self,image):
@@ -110,12 +112,7 @@ class GeoExifCollector():
 		else:
 			return ()
 
-def _uint(i):
-  i = int(i)
-  if i > sys.maxint and i <= 2 * sys.maxint + 1:
-    return int((i & sys.maxint) - sys.maxint - 1)
-  else:
-    return i
+
 def minimap(raw,map_img,coord):
 	
 	# crop_name="crop.gif"
@@ -129,13 +126,13 @@ def minimap(raw,map_img,coord):
 	im_crop = im_map.crop(box)
 	draw = ImageDraw.Draw(im_crop)
 	
-	draw.rectangle([(90,90),(110,110)],fill=_uint(0xff0000ff))
+	draw.rectangle([(90,90),(110,110)],fill=0xff0000ff)
 	del draw
 	
 	im_raw.paste(im_crop,(im_raw.size[0]-200,im_raw.size[1]-200))
 
-	#print raw
-	return_name=os.path.join(os.path.dirname(raw), os.path.basename(raw).split(".")[0]+"-mod" + ".jpg") 
+
+	return_name=str(raw).split("/")[-1]+"-mod" + ".jpg" 
 	print return_name
 	im_raw.save(return_name,quality=90)
 

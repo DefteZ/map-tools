@@ -1,0 +1,8 @@
+addminimap
+setup.py
+splitmap
+maptools/__init__.py
+maptools/image_operator.py
+maptools/map_operator.py
+maptools/minimap.py
+maptools/pygpx.py
