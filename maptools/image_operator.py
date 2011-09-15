@@ -109,6 +109,18 @@ class GeoExifCollector():
 			return self.points[f]
 		else:
 			return ()
+class CoordinateDraw():
+	def __init__(self, map_img):
+		pass
+	def setcoord(box):
+		pass
+	def setA4Portrait(coord, height):
+		pass
+	def setA4Landscape(coord, height):
+		pass
+	def save(path):
+		pass
+		
 
 def _uint(i):
   i = int(i)
@@ -116,6 +128,9 @@ def _uint(i):
     return int((i & sys.maxint) - sys.maxint - 1)
   else:
     return i
+
+
+
 def minimap(raw,map_img,coord):
 	
 	# crop_name="crop.gif"
@@ -152,7 +167,7 @@ def crop_path(image,coordlist,save_path):
 	ymin = int(min(coordlist,key=lambda k:k[1])[1])-50
 	xmax = int(max(coordlist,key=lambda k:k[0])[0])+50
 	ymax = int(max(coordlist,key=lambda k:k[1])[1])+50
-	print xmin,ymin,xmax,ymax,save_path
+	#print xmin,ymin,xmax,ymax,save_path
 	im.crop((xmin,ymin,xmax,ymax)).save(save_path)
 
 

@@ -4,7 +4,7 @@ import os
 
 
 import shutil
-import gdal
+from osgeo import gdal
 import osr
 import re
 import sys
@@ -13,6 +13,7 @@ from PIL.ExifTags import TAGS, GPSTAGS
 import pygpx as GPX
 import datetime
 import image_operator
+import math
 """
 Module for operation with GeoTiff map
 """
@@ -43,19 +44,26 @@ class Map():
 
 		# create a transform object to convert between coordinate systems
 		self.transform = osr.CoordinateTransformation(old_cs,new_cs) 
+		self.reversetransform = osr.CoordinateTransformation(new_cs,old_cs)
 		self.width = ds.RasterXSize
 		self.height = ds.RasterYSize
 		
 		
+
 		gt = ds.GetGeoTransform()
 		
 		self.minx = gt[0]
 		self.miny = gt[3] + self.width*gt[4] + self.height*gt[5] 
 		self.maxx = gt[0] + self.width*gt[1] + self.height*gt[2]
 		self.maxy = gt[3] 
+		self.coordMin = self.reversetransform.TransformPoint(self.minx,self.miny)[:-1]
+
+		self.coordMax = self.reversetransform.TransformPoint(self.maxx,self.maxy)[:-1]
+		
 
 	def getPath(self):
 		return self.path
+	
 	def getPixelCoord(self, lan, lat):
 		#print self.transform
 		
@@ -64,3 +72,16 @@ class Map():
 		# self.minx,self.miny, self.maxx, self.maxy
 		return  ((float)(tr_coord[0]-self.minx)/(self.maxx-self.minx)*self.width,\
 		 (float)(-tr_coord[1]+self.maxy)/(self.maxy-self.miny)*self.height)
+	def getCoordinateBox(self):
+		return (self.coordMin,self.coordMax)
+	def getPixelForKilometer(self):
+		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMin[1])
+		modCoordMin = (self.coordMin[0], self.coordMin[1] + float(1)/60)
+		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
+		
+		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)*(2/1.85200)*0.5
+		#endPixel  = getPixelCoord()
+m = Map("/home/privezentsev/kodar-1km.tif")
+m.getPixelForKilometer()
+	
+

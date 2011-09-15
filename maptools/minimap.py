@@ -66,7 +66,28 @@ def minimap_create(map_img,dir_path):
 			os.remove(target_path)
 		shutil.move(minimap_path, os.path.join(dir_path,mod))
 
-			
+
+
+
+def splitA4All(map_image):
+	m = map_operator.Map(map_image)
+	box = m.getCoordinateBox()
+	pixkil = m.getPixelForKilometer()
 	
+	a4width = pixkil*21
+	a4height = pixkil*29
+
+	by_width = int(m.width/a4width)
+	by_height = int(m.height/a4height)
+	for i in range(by_width):
+		xcoord = i*a4width
+		for j in range(by_height):
+			ycoord = j*a4height			
+			print (xcoord,ycoord,a4width,a4height)
+			image_operator._crop(map_image, (xcoord,ycoord,xcoord + a4width,ycoord+ a4height),\
+				os.path.join(os.path.dirname(map_image),str(j) + "_" +str(i) + ".jpg"))
+		
+def splitA4One(map_image, coord):
+	pass	
 
  	
