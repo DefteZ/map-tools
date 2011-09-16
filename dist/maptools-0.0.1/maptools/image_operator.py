@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
 import os
-import pyexiv2
-
 import shutil
 import gdal
 import osr
@@ -23,12 +21,12 @@ class GeoExifCollector():
 		images = filter(isJPG,  os.listdir(dirpath))
 
 		for f in images:
-			
-			exif_data = self._get_exif_data(Image.open(dirpath + "/" + f))
+			image_path = os.path.join(dirpath,f)
+			exif_data = self._get_exif_data(Image.open(image_path))
 		
 			point =  self._get_lat_lon(exif_data)
 			if not None in point:
-				self.points[dirpath + "/" + f]=point
+				self.points[image_path]=point
 			
 				
 	def _get_exif_data(self,image):
@@ -111,6 +109,26 @@ class GeoExifCollector():
 			return self.points[f]
 		else:
 			return ()
+class CoordinateDraw():
+	def __init__(self, map_img):
+		pass
+	def setcoord(box):
+		pass
+	def setA4Portrait(coord, height):
+		pass
+	def setA4Landscape(coord, height):
+		pass
+	def save(path):
+		pass
+		
+
+def _uint(i):
+  i = int(i)
+  if i > sys.maxint and i <= 2 * sys.maxint + 1:
+    return int((i & sys.maxint) - sys.maxint - 1)
+  else:
+    return i
+
 
 
 def minimap(raw,map_img,coord):
@@ -126,13 +144,13 @@ def minimap(raw,map_img,coord):
 	im_crop = im_map.crop(box)
 	draw = ImageDraw.Draw(im_crop)
 	
-	draw.rectangle([(90,90),(110,110)],fill=0xff0000ff)
+	draw.rectangle([(90,90),(110,110)],fill=_uint(0xff0000ff))
 	del draw
 	
 	im_raw.paste(im_crop,(im_raw.size[0]-200,im_raw.size[1]-200))
 
-
-	return_name=str(raw).split("/")[-1]+"-mod" + ".jpg" 
+	#print raw
+	return_name=os.path.join(os.path.dirname(raw), os.path.basename(raw).split(".")[0]+"-mod" + ".jpg") 
 	print return_name
 	im_raw.save(return_name,quality=90)
 
@@ -149,7 +167,7 @@ def crop_path(image,coordlist,save_path):
 	ymin = int(min(coordlist,key=lambda k:k[1])[1])-50
 	xmax = int(max(coordlist,key=lambda k:k[0])[0])+50
 	ymax = int(max(coordlist,key=lambda k:k[1])[1])+50
-	print xmin,ymin,xmax,ymax,save_path
+	#print xmin,ymin,xmax,ymax,save_path
 	im.crop((xmin,ymin,xmax,ymax)).save(save_path)
 
 

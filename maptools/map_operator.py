@@ -61,13 +61,28 @@ class Map():
 
 		self.coordMax = self.reversetransform.TransformPoint(self.maxx,self.maxy)[:-1]
 		
-
+	def _getTopOffset(self,x):
+		leftTopOffset = self.getPixelCoord(self.coordMin[0],self.coordMax[1])[1]
+		rightTopOffset = self.getPixelCoord(self.coordMax[0],self.coordMax[1])[1]
+		#print leftTopOffset,rightTopOffset
+		return ((self.width-x)/self.width)*(leftTopOffset-rightTopOffset)
+		
 	def getPath(self):
 		return self.path
 	def getWGS84Coord(self,x,y):
-		raw_coord = (x*(self.maxx-self.minx)/self.width+self.minx,\
-					y*(self.maxy-self.miny)/self.height+self.miny)
-		return self.reversetransform.TransformPoint(raw_coord[0],raw_coord[1])[:-1]
+		#print "offset ",x,self._getTopOffset(x)
+		raw_coord = (x*(float)(self.maxx-self.minx)/self.width+self.minx ,\
+					abs(y*(float)(self.maxy-self.miny)/self.height-self.maxy))
+		#print self.getPixelCoord(117.33,57.0092)
+
+		#print self.coordMax,self.coordMin
+
+		coord=self.reversetransform.TransformPoint(raw_coord[0],raw_coord[1])[:-1]
+		#print coord,x,y
+		# coord=(coord[0],\
+		# 	   coord[1]-(self._getTopOffset(x)/self.getPixelForMinuteLon())/60)
+		#print coord
+		return  coord 
 			
 	def getPixelCoord(self, lan, lat):
 		#print self.transform
@@ -89,18 +104,24 @@ class Map():
 		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMin[1])
 		modCoordMin = (self.coordMin[0]+float(1)/60, self.coordMin[1])
 		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
+		
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
 	def getPixelForMinuteLon(self):
-		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMin[1])
-		modCoordMin = (self.coordMin[0], self.coordMin[1] + float(1)/60)
-		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
 		
+		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMax[1])
+		#print self.coordMin
+		modCoordMin = (self.coordMin[0], self.coordMax[1] - float(1)/60)
+		#print modCoordMin
+		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
+		#print beginPixel,endPixel
+		print math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
+
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
 
 
 		#endPixel  = getPixelCoord()
 #m = Map("/home/privezentsev/kodar-1km.tif")
-#m.getPixelForKilometer()
+#m.getPixelForMinuteLon()
 #print m.getWGS84Coord(1000,0)
 	
 

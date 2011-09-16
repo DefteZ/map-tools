@@ -84,6 +84,7 @@ def splitA4All(map_image):
 
 	#vBinit_coord = m.getPixelCoord(int(box[0][0]),int(box[1][1]))
 	offset = 26
+	head = 80
 	#print init_coord
 
 	#by_width=1
@@ -92,39 +93,57 @@ def splitA4All(map_image):
 		xcoord = i*a4width #+ init_coord[1]
 		for j in range(by_height):
 			ycoord = j*a4height #+ init_coord[0]	
-			
+			#print xcoord,ycoord
 			wgsLeft = m.getWGS84Coord(xcoord,ycoord)
 			wgsRight = m.getWGS84Coord(xcoord+a4width,ycoord)
-			print wgsLeft,wgsRight
-			wgsDeltaX = wgsLeft[1]*60-int(wgsLeft[1]*60)
-			wgsDeltaY = wgsLeft[0]*60-int(wgsLeft[0]*60)
-			print wgsDeltaX*m.getPixelForMinuteLat()
+			#print wgsLeft,wgsRight
+			print j,i
+			wgsDeltaX = wgsLeft[0]*60-int(wgsLeft[0]*60)
+			wgsDeltaY = wgsLeft[1]*60-int(wgsLeft[1]*60)
+			#print wgsLeft[1]*60,int(wgsLeft[1]*60),wgsDeltaX*m.getPixelForMinuteLat()
+			#print wgsLeft[0],int(wgsLeft[0]),m.getPixelForMinuteLon()
 			whKoef = m.getPixelForMinuteLat()/m.getPixelForMinuteLon()
-		
+			#math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
+
 			rotateAngle = math.atan((-wgsLeft[1]+wgsRight[1])/((-wgsLeft[0]+wgsRight[0])*whKoef))
 			#print rotateAngle
 			
 			savepath = os.path.join(os.path.dirname(map_image),str(j) + "_" +str(i) + ".jpg")
 			
 
-			newIm = Image.new('RGBA',(int(a4width+52),int(a4height+52)))
+			newIm = Image.new('RGBA',(int(a4width+52),int(a4height+52+head)),color=0xffffffff)
 			image_operator._crop(map_image, (int(xcoord),int(ycoord),int(xcoord + a4width),int(ycoord+ a4height)),savepath)
 			im=Image.open(savepath)
 			im=im.rotate((180/math.pi)*rotateAngle,expand=True)
-			newIm.paste(im,(offset,offset))
+			newIm.paste(im,(offset,offset+head))
 			newIm.save(savepath)
-			print a4width/2 - math.cos(rotateAngle)*a4width/2
-
+			#print math.sin(rotateAngle)*a4height
+			#print wgsDeltaX,offset+ wgsDeltaX*m.getPixelForMinuteLat()- math.sin(rotateAngle)*a4height,wgsLeft[0],int(wgsLeft[0])
+			print newIm.size[0]
 			image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat(),\
-				init_coord=offset+wgsDeltaX*m.getPixelForMinuteLat()+ (a4width/2 - math.cos(rotateAngle)*math.sqrt((a4width**2)/4+(a4height**2)/4)))
+				init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*a4height,fixcoord=head)
+			image_operator.drawYCoordinatePlank(savepath, m.getPixelForMinuteLon(),\
+				init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head)
+			image_operator.drawYCoordinatePlank(savepath, m.getPixelForMinuteLon(),\
+				init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head,fixcoord=newIm.size[0]-10)
+			image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat(),\
+				init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*a4height,fixcoord=newIm.size[1]-10)
 			
-			image_operator.drawYCoordinatePlank(savepath, int(m.getPixelForKilometer()*1.8520),\
-				init_coord=offset+wgsDeltaY*m.getPixelForMinuteLon()-math.tan(rotateAngle)*a4width/2)
+
+			font = ImageFont.truetype(os.path.join(os.path.dirname(os.path.realpath(__file__)),"data","arial.ttf"), 30)
+			im = Image.open(savepath)
+			draw  = ImageDraw.Draw(im)
+			print wgsLeft[1]-math.floor(wgsLeft[1]),str((wgsLeft[1]-math.floor(wgsLeft[1]))*60)
+			draw.rectangle((0,0,a4width+offset*2,68),fill=0xffffffff)
+			draw.text((0, 0), "N " + str(int(wgsLeft[1]))+ " " +str(int (math.floor((wgsLeft[1]-math.floor(wgsLeft[1]))*60))), font=font,fill=0xff5533FF)
+			draw.text((0, 33), "E " +str(int(wgsLeft[0]))+ " " +str(int (math.floor((wgsLeft[0]-math.floor(wgsLeft[0]))*60))), font=font,fill=0xff5533FF)
 			
+			del draw
+			im.save(savepath)
 
 		
 def splitA4One(map_image, coord):
 
 	pass
 print "dsadsa"
-splitA4All("/home/q/kodar-1km.tif")
+splitA4All("/home/privezentsev/kodar-1km.tif")

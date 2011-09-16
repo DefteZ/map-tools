@@ -185,21 +185,21 @@ def drawXCoordinatePlank(image, pixelMinute, init_coord = 0,fixcoord=0):
 	draw = ImageDraw.Draw(im_raw)
 	
 	tenpix = int(pixelMinute/6)
-	for i in range(int(im_raw.size[0]-init_coord/pixelMinute)+1)[1:]:
+	for i in range(int(im_raw.size[0]-init_coord/pixelMinute)+1)[0:]:
 		xcoord = i*pixelMinute+init_coord
 		if xcoord >= pixelMinute:
 			 
 			f = 0
 			if i%2==0:
-				f = _uint(0xffffffff)
+				f = _uint(0xffDDDDDD)
 			else:
-				f = _uint(0xff888888)
+				f = _uint(0xff222222)
 			
-			draw.line((xcoord-pixelMinute,fixcoord,xcoord,fixcoord),fill=f,width=50)
+			draw.line((xcoord-pixelMinute,fixcoord+10,xcoord,fixcoord+10),fill=f,width=20)
 
 			for i in range(6):
 				pointx = xcoord - pixelMinute + i*tenpix
-				draw.rectangle((pointx-1,10,pointx+1,20), fill=_uint(0xff0000ff))
+				draw.rectangle((pointx-1,fixcoord+10,pointx+1,fixcoord+20), fill=_uint(0xff0000ff))
 
 
 	del draw
@@ -210,7 +210,7 @@ def drawYCoordinatePlank(image, pixelMinute,  init_coord=0, fixcoord=0):
 	im_raw =  Image.open(image)
 	draw = ImageDraw.Draw(im_raw)
 	
-	tenpix = int(pixelMinute/6)
+	tenpix = int(pixelMinute/6.0)
 	
 	for i in range(int(im_raw.size[1]-init_coord/pixelMinute)+1)[1:]:
 		xcoord = i*pixelMinute+init_coord
@@ -218,11 +218,11 @@ def drawYCoordinatePlank(image, pixelMinute,  init_coord=0, fixcoord=0):
 			 
 			f = 0
 			if i%2==0:
-				f = _uint(0xffffffff)
+				f = _uint(0xffdddddd)
 			else:
-				f = _uint(0xff888888)
+				f = _uint(0xff222222)
 			#print f
-			draw.line((fixcoord, xcoord-pixelMinute,fixcoord,xcoord),fill=f,width=50)
+			draw.line((fixcoord+10, xcoord-pixelMinute,fixcoord+10,xcoord),fill=f,width=20)
 
 			for i in range(6):
 				pointx = xcoord - pixelMinute + i*tenpix

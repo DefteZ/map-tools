@@ -13,5 +13,5 @@ if __name__ == "__main__":
 	if not os.path.exists(argv[2]):
 		print "Error path to map. File does not exist"
 		exit(0)
-	print "asdsddas"
+	
 	maptools.minimap.minimap_create(argv[2],argv[1])
