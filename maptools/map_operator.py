@@ -24,6 +24,7 @@ class Map():
 		ds = gdal.Open(path)
 
 		new_cs=osr.SpatialReference()
+		print path
 		new_cs.ImportFromWkt(ds.GetProjectionRef())
 		
 		# create the new coordinate system
@@ -98,8 +99,8 @@ class Map():
 
 
 		#endPixel  = getPixelCoord()
-m = Map("/home/privezentsev/kodar-1km.tif")
-m.getPixelForKilometer()
-print m.getWGS84Coord(1000,0)
+#m = Map("/home/privezentsev/kodar-1km.tif")
+#m.getPixelForKilometer()
+#print m.getWGS84Coord(1000,0)
 	
 
