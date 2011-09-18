@@ -2,8 +2,12 @@
 import maptools.minimap
 import sys
 import os
+import argparse
 if __name__ == "__main__":
 	argv = sys.argv
+
+        parser = argparse.ArgumentParser(description='Add minimap on photo using coordinate in EXIF and geotiff map')
+        
 	if (len(argv)<3):
 		print "Few argument. Use program as: addminimap [directory-path] [map-path]"
 		exit(0)
