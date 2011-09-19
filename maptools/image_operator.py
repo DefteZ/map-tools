@@ -254,7 +254,7 @@ def drawYCoordinatePlank(image, pixelMinute,  init_coord=0, fixcoord=0):
 	
 	im_raw.save(image)
 
-image = Image.open("/home/privezentsev/0_3.jpg")
-print image.info
+#image = Image.open("/home/privezentsev/0_3.jpg")
+#print image.info
 #drawXCoordinatePlank("/home/privezentsev/0_3.jpg",100, init_coord=50)
 #drawYCoordinatePlank("/home/privezentsev/test.jpg",100, init_coord=50)

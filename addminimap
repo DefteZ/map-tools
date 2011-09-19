@@ -2,28 +2,23 @@
 import maptools.minimap
 import sys
 import os
-<<<<<<< HEAD
+
+
 import argparse
+
+def isdir(string):
+	if not os.path.isdir(string):
+		msg = "%r is not direcotory" % string
+		raise argparse.ArgumentTypeError(msg)
+	else:
+		return os.path.abspath(string)
 if __name__ == "__main__":
 	argv = sys.argv
 
-        parser = argparse.ArgumentParser(description='Add minimap on photo using coordinate in EXIF and geotiff map')
-        
-	if (len(argv)<3):
-=======
-import re
-if __name__ == "__main__":
-        argv = sys.argv
+	parser = argparse.ArgumentParser(description='Add minimap on photo using coordinate in EXIF and geotiff map')
+	parser.add_argument("MAP_PATH",type=argparse.FileType("r"),nargs=1,help="Path to map in geotiff format")
+	parser.add_argument("DIR_PATH",type=isdir, nargs=1, help="Path to directory with photos")
+	args = parser.parse_args("/home/q/kodar-1km.tif /home/q/".split())
+	print args.MAP_PATH,args.DIR_PATH
 
-        if (len(argv)<3):       
->>>>>>> f8ef7b1edd834890100849811ea6bce98190de0b
-		print "Few argument. Use program as: addminimap [directory-path] [map-path]"
-		exit(0)
-	if not os.path.exists(argv[1]):
-		print "Error path to directory. Directory does not exists"
-		exit(0)
-	if not os.path.exists(argv[2]):
-                print "Error path to map. File does not exist"
-		exit(0)
-	
-	maptools.minimap.minimap_create(argv[2],argv[1])
+	maptools.minimap.minimap_create(args.MAP_PATH[0].name,args.DIR_PATH[0])
