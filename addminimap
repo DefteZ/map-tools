@@ -18,7 +18,6 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Add minimap on photo using coordinate in EXIF and geotiff map')
 	parser.add_argument("MAP_PATH",type=argparse.FileType("r"),nargs=1,help="Path to map in geotiff format")
 	parser.add_argument("DIR_PATH",type=isdir, nargs=1, help="Path to directory with photos")
-	args = parser.parse_args("/home/q/kodar-1km.tif /home/q/".split())
-	print args.MAP_PATH,args.DIR_PATH
+	args = parser.parse_args()
 
 	maptools.minimap.minimap_create(args.MAP_PATH[0].name,args.DIR_PATH[0])

@@ -2,18 +2,18 @@
 import maptools.minimap
 import sys
 import os
+import argparse
+
 if __name__ == "__main__":
 	argv = sys.argv
-	if (len(argv)<3):
-		print "Few argument. Use program as: splitmap [map-path] [gpx-path] [utc-zone]"
-		exit(0)
-	if not os.path.exists(argv[1]):
-		print "Error path to map. File does not exist"
-		exit(0)
-	if not os.path.exists(argv[2]):
-		print "Error path to gpx file. File not exist"
-		exit(0)
-	if int(argv[3])>12 or int(argv[3])<-12:
-		print "UTC zone must be between -12 and 12"
-		exit(0)
-	maptools.minimap.split_by_gpx(os.path.abspath(argv[1]),os.path.abspath(argv[2]),argv[3])
+	parser = argparse.ArgumentParser(description="Program for to split map in chunk for per day of track.")
+	parser.add_argument("MAP_PATH", type=argparse.FileType("r"),nargs=1,help="Path to map in geotiff format")
+	parser.add_argument("GPX_PATH", type=argparse.FileType("r"),nargs=1,help="Path to track in GPX format")
+	parser.add_argument("--utczone",type=int,choices=xrange(-12,12),help="Time relative to UTC")
+	args = parser.parse_args()
+	
+	zone=0
+	if "--utczone" in args:
+		zone=args.utczone[0]
+	print args
+	maptools.minimap.split_by_gpx(os.path.abspath(args.MAP_PATH[0].name),os.path.abspath(args.GPX_PATH[0].name),zone)
