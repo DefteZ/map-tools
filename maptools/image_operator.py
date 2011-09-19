@@ -8,7 +8,7 @@ import re
 import sys
 import Image, ImageDraw
 from PIL.ExifTags import TAGS, GPSTAGS
-
+import pyexiv2
 import pygpx as GPX
 
 class GeoExifCollector():
@@ -19,7 +19,7 @@ class GeoExifCollector():
 		#os.listdir(os.curdir)
 		isJPG = lambda x: re.search(".*\.(JPG|jpg|jpeg|JPEG)",str(x)) != None
 		images = filter(isJPG,  os.listdir(dirpath))
-
+               # print dir(self._get_exif_data)
 		for f in images:
 			image_path = os.path.join(dirpath,f)
 			exif_data = self._get_exif_data(Image.open(image_path))
@@ -27,14 +27,17 @@ class GeoExifCollector():
 			point =  self._get_lat_lon(exif_data)
 			if not None in point:
 				self.points[image_path]=point
-			
-				
+	
+                
+
 	def _get_exif_data(self,image):
 		"""Returns a dictionary from the exif data of an PIL Image item. Also converts the GPS Tags"""
 		exif_data = {}
+                
 		if image.format !="JPEG":
 			return exif_data
 		info = image._getexif()
+#                print dir(image) # 
 		if info:
 			for tag, value in info.items():
 				decoded = TAGS.get(tag, tag)
@@ -51,7 +54,7 @@ class GeoExifCollector():
 				exif_data[decoded] = value
 
 		return exif_data
-
+                
 	def _get_if_exist(self,data, key):
 		if key in data:
 			return data[key]
@@ -130,7 +133,25 @@ def _uint(i):
     return i
 
 
+def copyMetaData(src,dst):
+        print src,dst
+        img_src = pyexiv2.Image(src)
+        img_dst = pyexiv2.Image(dst)
+        img_src.readMetadata()
+        img_dst.readMetadata()
+        print img_src.exifKeys()
+#        img_src.copyMetadataTo(img_dst)
+        img_dst['Exif.Photo.DateTimeOriginal']=img_src['Exif.Photo.DateTimeOriginal']
+        img_dst.writeMetadata()
+        
+        
 
+#        pyexiv2.Image.copyMetadataTo
+ #       meta = pyexiv2.Image.copyMetadataTo(src,dst)
+  #      meta.copy(dst,exif=True,comment=True)
+        
+        
+        
 def minimap(raw,map_img,coord):
 	
 	# crop_name="crop.gif"
@@ -145,7 +166,7 @@ def minimap(raw,map_img,coord):
 	draw = ImageDraw.Draw(im_crop)
 	
 	draw.rectangle([(90,90),(110,110)],fill=_uint(0xff0000ff))
-	del draw
+        del draw
 	
 	im_raw.paste(im_crop,(im_raw.size[0]-200,im_raw.size[1]-200))
 
@@ -233,6 +254,7 @@ def drawYCoordinatePlank(image, pixelMinute,  init_coord=0, fixcoord=0):
 	
 	im_raw.save(image)
 
-			
+image = Image.open("/home/privezentsev/0_3.jpg")
+print image.info
 #drawXCoordinatePlank("/home/privezentsev/0_3.jpg",100, init_coord=50)
 #drawYCoordinatePlank("/home/privezentsev/test.jpg",100, init_coord=50)

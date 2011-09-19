@@ -18,6 +18,7 @@ import math
 def split_by_gpx(map_img,gpx_file,utc_zone):
 	"""Create crop map by day"""
 	split_dir = "split"
+        
 	gpx = GPX.GPX(open(gpx_file))
 	map_info = map_operator.Map(map_img)
 	if not os.path.exists(split_dir):
@@ -57,7 +58,8 @@ def minimap_create(map_img,dir_path):
 		
 		wgsc = geo.getWGS84Coord(f)
 		
-		minimap_path = image_operator.minimap(f, tiff.getPath(), tiff.getPixelCoord(wgsc[0],wgsc[1]))
+                minimap_path = image_operator.minimap(f, tiff.getPath(), tiff.getPixelCoord(wgsc[0],wgsc[1]))
+                image_operator.copyMetaData(f,minimap_path)
 		target_path = os.path.join(dir_path, mod, os.path.basename(minimap_path))
 		
 
