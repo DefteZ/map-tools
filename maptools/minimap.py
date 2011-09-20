@@ -76,7 +76,7 @@ class PaperFormat():
 		
 
 def splitA4All(map_image, format=PaperFormat.A4):
-	print map_image
+	#print map_image
 	m = map_operator.Map(map_image)
 	box = m.getCoordinateBox()
 	
@@ -96,7 +96,11 @@ def splitA4All(map_image, format=PaperFormat.A4):
 
 			splitOne(m,(xcoord,ycoord),format=format)
 def _wgsToStr(coord):
-	return 	str(int(coord))+ " " +str(int (math.floor((coord-math.floor(coord))*60)))
+	print str(round(coord))+ "0", str(int(coord))+ " " + str(round(abs(coord-round(coord))*60)), coord - round(coord)
+	if abs(coord -round(coord))< float(1)/100:
+		return 	str(round(coord))+ " " + "0"
+	else:
+		return str(int(coord))+ " " + str(int(abs(coord-int(coord))*60))
 		
 def splitOne(map_class, coord, format=PaperFormat.A4):
 	m = map_class
@@ -114,46 +118,55 @@ def splitOne(map_class, coord, format=PaperFormat.A4):
 	wgsRight = m.getWGS84Coord(xcoord+formatWidth,ycoord)
 	#print wgsLeft,wgsRight
 	#print j,i
-	wgsDeltaX = wgsLeft[0]*60-int(wgsLeft[0]*60)
-	wgsDeltaY = wgsLeft[1]*60-int(wgsLeft[1]*60)
+	print int(wgsLeft[0]*60), wgsLeft[0]*60
+	wgsDeltaX = wgsLeft[0]*60-round(wgsLeft[0]*60)
+	wgsDeltaY = wgsLeft[1]*60-round(wgsLeft[1]*60)
 	#print wgsLeft[1]*60,int(wgsLeft[1]*60),wgsDeltaX*m.getPixelForMinuteLat()
 	#print wgsLeft[0],int(wgsLeft[0]),m.getPixelForMinuteLon()
 	whKoef = m.getPixelForMinuteLat()/m.getPixelForMinuteLon()
 	#math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
 	rotateAngle = math.atan((-wgsLeft[1]+wgsRight[1])/((-wgsLeft[0]+wgsRight[0])*whKoef))
 	#print rotateAngle
+	
 	wgsToPath = lambda x:_wgsToStr(x).replace(" ","_")
+
+
 	savepath = os.path.join(os.path.dirname(map_image),wgsToPath(wgsLeft[0]) + "x" +wgsToPath(wgsRight[1]) + ".jpg")
 		
-
+	print "Create " + savepath
 	newIm = Image.new('RGBA',(int(formatWidth+52),int(formatHeight+52+head)),color=0xffffffff)
-	image_operator._crop(map_image, (int(xcoord),int(ycoord),int(xcoord + formatWidth),int(ycoord+ formatHeight)),savepath)
-	im=Image.open(savepath)
-	im=im.rotate((180/math.pi)*rotateAngle,expand=True)
-	newIm.paste(im,(offset,offset+head))
-	newIm.save(savepath)
+
+	img_raw = Image.open(map_image)
+	box = (int(xcoord),int(ycoord),int(xcoord + formatWidth),int(ycoord+ formatHeight))
+	im_crop = img_raw.crop(box)
+
+	#image_operator._crop(map_image, (int(xcoord),int(ycoord),int(xcoord + formatWidth),int(ycoord+ formatHeight)),savepath)
+	#im=Image.open(savepath)
+	im_rotate=im_crop.rotate((180/math.pi)*rotateAngle,expand=True)
+	newIm.paste(im_rotate,(offset,offset+head))
+	#newIm.save(savepath)
 			#print math.sin(rotateAngle)*formatHeight
 			#print wgsDeltaX,offset+ wgsDeltaX*m.getPixelForMinuteLat()- math.sin(rotateAngle)*formatHeight,wgsLeft[0],int(wgsLeft[0])
-	print newIm.size[0]
-	image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat(),\
-		init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=head)
-	image_operator.drawYCoordinatePlank(savepath, m.getPixelForMinuteLon(),\
-		init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head)
-	image_operator.drawYCoordinatePlank(savepath, m.getPixelForMinuteLon(),\
-		init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head,fixcoord=newIm.size[0]-10)
-	image_operator.drawXCoordinatePlank(savepath,m.getPixelForMinuteLat(),\
-		init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=newIm.size[1]-10)
+	#print newIm.size[0]
+	newIm = image_operator.drawXCoordinatePlank(newIm,m.getPixelForMinuteLat(),\
+		init_coord=offset - 0.5*wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=head+10,width=20)
+	newIm = image_operator.drawYCoordinatePlank(newIm, m.getPixelForMinuteLon(),\
+		init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head,fixcoord=10,width=20)
+	newIm = image_operator.drawYCoordinatePlank(newIm, m.getPixelForMinuteLon(),\
+		init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head,fixcoord=newIm.size[0]-10,width=20)
+	newIm = image_operator.drawXCoordinatePlank(newIm,m.getPixelForMinuteLat(),\
+		init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=newIm.size[1]-10,width=20)
 			
 
 	font = ImageFont.truetype(os.path.join(os.path.dirname(os.path.realpath(__file__)),"data","arial.ttf"), 30)
-	im = Image.open(savepath)
-	draw  = ImageDraw.Draw(im)
-	print wgsLeft[1]-math.floor(wgsLeft[1]),str((wgsLeft[1]-math.floor(wgsLeft[1]))*60)
+	#im = Image.open(savepath)
+	draw  = ImageDraw.Draw(newIm)
+	#print wgsLeft[1]-math.floor(wgsLeft[1]),str((wgsLeft[1]-math.floor(wgsLeft[1]))*60)
 	draw.rectangle((0,0,formatWidth+offset*2,68),fill=0xffffffff)
 	draw.text((0, 0), "N " + _wgsToStr(wgsLeft[1]), font=font,fill=0xff5533FF)
 	draw.text((0, 33), "E " +_wgsToStr(wgsLeft[0]), font=font,fill=0xff5533FF)
 			
 	del draw
-	im.save(savepath)
+	newIm.save(savepath)
 	
 

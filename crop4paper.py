@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
         format = maptools.minimap.PaperFormat.A4
-        print args.format
+        #print args.format
         if  "a3" in args.format:
                 format =  maptools.minimap.PaperFormat.A3
                 

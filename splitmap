@@ -15,5 +15,5 @@ if __name__ == "__main__":
 	zone=0
 	if "--utczone" in args:
 		zone=args.utczone[0]
-	print args
+	
 	maptools.minimap.split_by_gpx(os.path.abspath(args.MAP_PATH[0].name),os.path.abspath(args.GPX_PATH[0].name),zone)

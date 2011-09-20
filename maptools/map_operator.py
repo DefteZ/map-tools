@@ -24,7 +24,7 @@ class Map():
 		ds = gdal.Open(path)
 
 		new_cs=osr.SpatialReference()
-		print path
+		#print path
 		new_cs.ImportFromWkt(ds.GetProjectionRef())
 		
 		# create the new coordinate system
@@ -114,7 +114,7 @@ class Map():
 		#print modCoordMin
 		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
 		#print beginPixel,endPixel
-		print math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
+		#print math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
 
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
 
