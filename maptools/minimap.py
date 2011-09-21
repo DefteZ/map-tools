@@ -119,8 +119,8 @@ def splitOne(map_class, coord, format=PaperFormat.A4):
 	#print wgsLeft,wgsRight
 	#print j,i
 	print int(wgsLeft[0]*60), wgsLeft[0]*60
-	wgsDeltaX = wgsLeft[0]*60-round(wgsLeft[0]*60)
-	wgsDeltaY = wgsLeft[1]*60-round(wgsLeft[1]*60)
+	wgsDeltaX = wgsLeft[0]*60-int(wgsLeft[0]*60)
+	wgsDeltaY = wgsLeft[1]*60-int(wgsLeft[1]*60)
 	#print wgsLeft[1]*60,int(wgsLeft[1]*60),wgsDeltaX*m.getPixelForMinuteLat()
 	#print wgsLeft[0],int(wgsLeft[0]),m.getPixelForMinuteLon()
 	whKoef = m.getPixelForMinuteLat()/m.getPixelForMinuteLon()
@@ -149,7 +149,7 @@ def splitOne(map_class, coord, format=PaperFormat.A4):
 			#print wgsDeltaX,offset+ wgsDeltaX*m.getPixelForMinuteLat()- math.sin(rotateAngle)*formatHeight,wgsLeft[0],int(wgsLeft[0])
 	#print newIm.size[0]
 	newIm = image_operator.drawXCoordinatePlank(newIm,m.getPixelForMinuteLat(),\
-		init_coord=offset - 0.5*wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=head+10,width=20)
+		init_coord=offset - wgsDeltaX*m.getPixelForMinuteLat() - math.sin(rotateAngle)*formatHeight,fixcoord=head+10,width=20)
 	newIm = image_operator.drawYCoordinatePlank(newIm, m.getPixelForMinuteLon(),\
 		init_coord=offset +  wgsDeltaY*m.getPixelForMinuteLon()+head,fixcoord=10,width=20)
 	newIm = image_operator.drawYCoordinatePlank(newIm, m.getPixelForMinuteLon(),\

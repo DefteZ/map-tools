@@ -52,13 +52,13 @@ class Map():
 		
 
 		gt = ds.GetGeoTransform()
-		
+		print gt
 		self.minx = gt[0]
 		self.miny = gt[3] + self.width*gt[4] + self.height*gt[5] 
 		self.maxx = gt[0] + self.width*gt[1] + self.height*gt[2]
 		self.maxy = gt[3] 
 		self.coordMin = self.reversetransform.TransformPoint(self.minx,self.miny)[:-1]
-
+		print self.minx,self.miny,self.maxx,self.maxy
 		self.coordMax = self.reversetransform.TransformPoint(self.maxx,self.maxy)[:-1]
 		
 	def _getTopOffset(self,x):
@@ -101,8 +101,8 @@ class Map():
 		
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)*(2/1.85200)*0.5
 	def getPixelForMinuteLat(self):
-		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMin[1])
-		modCoordMin = (self.coordMin[0]+float(1)/60, self.coordMin[1])
+		beginPixel = self.getPixelCoord(self.coordMin[0],self.coordMax[1])
+		modCoordMin = (self.coordMin[0]+float(1)/60, self.coordMax[1])
 		endPixel = self.getPixelCoord(modCoordMin[0], modCoordMin[1])
 		
 		return math.sqrt((beginPixel[1]-endPixel[1])**2 + (beginPixel[0]-endPixel[0])**2)
