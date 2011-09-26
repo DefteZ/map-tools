@@ -29,16 +29,16 @@ class Map():
 		
 		# create the new coordinate system
 		wgs84_wkt = """
-		GEOGCS["WGS 84",
-		DATUM["WGS_1984",
-			SPHEROID["WGS 84",6378137,298.257223563,
-				AUTHORITY["EPSG","7030"]],
-			AUTHORITY["EPSG","6326"]],
-		PRIMEM["Greenwich",0,
-			AUTHORITY["EPSG","8901"]],
-		UNIT["degree",0.01745329251994328,
-			AUTHORITY["EPSG","9122"]],
-		AUTHORITY["EPSG","4326"]]"""
+	 GEOGCS["Pulkovo 1942",
+        DATUM["Pulkovo_1942",
+            SPHEROID["Krassowsky 1940",6378245,298.2999999999985,
+                AUTHORITY["EPSG","7024"]],
+            AUTHORITY["EPSG","6284"]],
+        PRIMEM["Greenwich",0],
+        UNIT["degree",0.0174532925199433],
+        AUTHORITY["EPSG","4284"]],
+    
+	"""
 
 		old_cs = osr.SpatialReference()
 		old_cs.ImportFromWkt(wgs84_wkt)
