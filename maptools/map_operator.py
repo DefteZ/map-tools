@@ -52,13 +52,13 @@ class Map():
 		
 
 		gt = ds.GetGeoTransform()
-		print gt
+		#print gt
 		self.minx = gt[0]
 		self.miny = gt[3] + self.width*gt[4] + self.height*gt[5] 
 		self.maxx = gt[0] + self.width*gt[1] + self.height*gt[2]
 		self.maxy = gt[3] 
 		self.coordMin = self.reversetransform.TransformPoint(self.minx,self.miny)[:-1]
-		print self.minx,self.miny,self.maxx,self.maxy
+	#	print self.minx,self.miny,self.maxx,self.maxy
 		self.coordMax = self.reversetransform.TransformPoint(self.maxx,self.maxy)[:-1]
 		
 	def _getTopOffset(self,x):
