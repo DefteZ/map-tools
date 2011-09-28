@@ -17,6 +17,9 @@ import math
 """
 Module for operation with GeoTiff map
 """
+
+def km1shppath():
+        return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"data","topo1km-rus.shp"))
 class Map():
 
 	def __init__(self, path):

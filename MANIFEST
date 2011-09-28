@@ -12,3 +12,8 @@ maptools/map_operator.py
 maptools/minimap.py
 maptools/pygpx.py
 maptools/data/arial.ttf
+maptools/data/topo1km-rus.avl
+maptools/data/topo1km-rus.dbf
+maptools/data/topo1km-rus.prj
+maptools/data/topo1km-rus.shp
+maptools/data/topo1km-rus.shx

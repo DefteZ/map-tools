@@ -34,7 +34,7 @@ if __name__=="__main__":
         vrtPath = os.path.join(dirPath,"o.vrt")
         resultPath=os.path.join(dirPath,"o.tif")
 
-        topoShp=os.path.abspath(os.path.join("maptools","data","topo1km-rus.shp"))
+        topoShp=maptools.map_operator.km1shppath()
         print "Translate and warp map:"
         if '*' in args.MAP_FILE[0]:
                 a=glob.glob(args.MAP_FILE[0])
@@ -66,7 +66,7 @@ if __name__=="__main__":
                 subprocess.call(["gdalwarp","-overwrite","-cutline",topoShp,"-cwhere",select,"-crop_to_cutline",translateModPath, os.path.join(dirPath,os.path.splitext(os.path.basename(f))[0]+"-crop.tif")])
         print 
         print "Merge map..."
-        subprocess.call(["gdalbuildvrt","-srcnodata","\"0 0 0 0\"", vrtPath]+glob.glob('*-crop.tif'))
+        subprocess.call(["gdalbuildvrt","-srcnodata","\"0 0 0 0\"", vrtPath]+glob.glob(os.path.join(dirPath,'*-crop.tif')))
         
         subprocess.call(["gdal_translate","-co", "COMPRESS=LZW",vrtPath,resultPath])
         print "Write merged map to",resultPath
