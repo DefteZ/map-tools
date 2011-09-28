@@ -22,21 +22,23 @@ def isdir(string):
 if __name__=="__main__":
         argv=sys.argv
         parser=argparse.ArgumentParser(description="Merge some Soviet topographic map")
-        parser.add_argument("TOPO_SHP",  type=argparse.FileType("r"), nargs=1,help="Path to shape file")
-        parser.add_argument("MAP_DIR",type=isdir, nargs='*', help="Path to maps")
+        #parser.add_argument("TOPO_SHP",  type=argparse.FileType("r"), nargs=1,help="Path to shape file")
+        parser.add_argument("MAP_FILE",type=isdir, nargs='*', help="Path to maps")
         
         args = parser.parse_args()
 
-        dirPath = os.path.dirname(args.MAP_DIR[0])
-        os.chdir(dirPath)
+        dirPath = os.path.dirname(args.MAP_FILE[0])
+        #os.chdir(dirPath)
         translatePath=os.path.join(dirPath,"translate.tif")
         translateModPath=os.path.join(dirPath,"translate-mod.tif")
         vrtPath = os.path.join(dirPath,"o.vrt")
         resultPath=os.path.join(dirPath,"o.tif")
-
+        
+        topoShp=os.path.abspath(os.path.join("maptools","data","topo1km-rus.shp"))
         
         print "Translate and warp map:"
-        for f in args.MAP_DIR:
+        
+        for f in args.MAP_FILE:
                 
 #                             
                 subprocess.call(["gdal_translate","-of","GTiff","-a_srs","EPSG:4284","-expand","rgba","-a_nodata","\"0 0 0 0\"",f,translatePath],stdout=open("/dev/null", "w"))
@@ -56,11 +58,12 @@ if __name__=="__main__":
                 km1 = int(12*((avlat+180)-km10*6)/6)+12*int(12-12*(avlon-zoneNum*4)/4+1)
                 print f,"Nomenclature:",zone+str(km10)+"-"+str(km1)
                 select = "zone='%s' and i10km=%s and i1km=%s" % (str(zone),str(km10),str(km1))
-
-                subprocess.call(["gdalwarp","-overwrite","-cutline",str(args.TOPO_SHP[0].name),"-cwhere",select,"-crop_to_cutline",translateModPath, os.path.join(dirPath,os.path.splitext(os.path.basename(f))[0]+"-crop.tif")],stdout=open("/dev/null","w"))
+                
+                subprocess.call(["gdalwarp","-overwrite","-cutline",topoShp,"-cwhere",select,"-crop_to_cutline",translateModPath, os.path.join(dirPath,os.path.splitext(os.path.basename(f))[0]+"-crop.tif")],stdout=open("/dev/null","w"))
                 
         print "Merge map..."
-        subprocess.call(["gdalbuildvrt","-srcnodata","\"0 0 0 0\"", vrtPath]+glob.glob('*-crop.tif'),stdout=open("/dev/null","w"))
+        
+        subprocess.call(["gdalbuildvrt","-srcnodata","\"0 0 0 0\"","-overwrite", vrtPath]+glob.glob('*-crop.tif'),stdout=open("/dev/null","w"))
         
         subprocess.call(["gdal_translate","-co", "COMPRESS=LZW",vrtPath,resultPath],stdout=open("/dev/null","w"))
         print "Write merged map to",resultPath
