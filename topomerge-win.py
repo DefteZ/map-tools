@@ -1,5 +1,5 @@
 #!/bin/python
-import gdal
+from osgeo import gdal
 import subprocess
 import argparse
 import maptools
@@ -24,7 +24,7 @@ if __name__=="__main__":
         parser=argparse.ArgumentParser(description="Merge some Soviet topographic map")
         parser.add_argument("TOPO_SHP",  type=argparse.FileType("r"), nargs=1,help="Path to shape file")
         parser.add_argument("MAP_FILE",type=isdir, nargs='*', help="Path to maps")
-        
+        parser.add_argumen("--type", nargs='1', choices=["100k","200k"],help="Map scale")
         args = parser.parse_args()
 
         dirPath = os.path.dirname(args.MAP_FILE[0])
@@ -33,8 +33,12 @@ if __name__=="__main__":
         translateModPath=os.path.join(dirPath,"translate-mod.tif")
         vrtPath = os.path.join(dirPath,"o.vrt")
         resultPath=os.path.join(dirPath,"o.tif")
+        if args.type==None or  args.type[0]=="100k" :
+                topoShp=maptools.map_operator.km1shppath()
+        else:
+                topoShp=maptools.map_operator.km2shppath()
 
-        topoShp=maptools.map_operator.km1shppath()
+        
         print "Translate and warp map:"
         if '*' in args.MAP_FILE[0]:
                 a=glob.glob(args.MAP_FILE[0])

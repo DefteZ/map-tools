@@ -8,11 +8,11 @@ from osgeo import gdal
 import osr
 import re
 import sys
-import Image, ImageDraw
-from PIL.ExifTags import TAGS, GPSTAGS
+
+
 import pygpx as GPX
 import datetime
-import image_operator
+
 import math
 """
 Module for operation with GeoTiff map
@@ -20,6 +20,8 @@ Module for operation with GeoTiff map
 
 def km1shppath():
         return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"data","topo1km-rus.shp"))
+def km2shppath():
+        return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"data","topo2km-rus.shp"))
 class Map():
 
 	def __init__(self, path):

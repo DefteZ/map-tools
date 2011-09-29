@@ -17,3 +17,8 @@ maptools/data/topo1km-rus.dbf
 maptools/data/topo1km-rus.prj
 maptools/data/topo1km-rus.shp
 maptools/data/topo1km-rus.shx
+maptools/data/topo2km-rus.avl
+maptools/data/topo2km-rus.dbf
+maptools/data/topo2km-rus.prj
+maptools/data/topo2km-rus.shp
+maptools/data/topo2km-rus.shx
