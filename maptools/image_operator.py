@@ -134,12 +134,12 @@ def _uint(i):
 
 
 def copyMetaData(src,dst):
-        print src,dst
+        #print src,dst
         img_src = pyexiv2.Image(src)
         img_dst = pyexiv2.Image(dst)
         img_src.readMetadata()
         img_dst.readMetadata()
-        print img_src.exifKeys()
+        #print img_src.exifKeys()
 #        img_src.copyMetadataTo(img_dst)
         img_dst['Exif.Photo.DateTimeOriginal']=img_src['Exif.Photo.DateTimeOriginal']
         img_dst.writeMetadata()
