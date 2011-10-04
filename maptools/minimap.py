@@ -72,6 +72,7 @@ def minimap_create(map_img,dir_path):
 class PaperFormat():
 	A4=(20,28)
 	A3=(28,36)
+        NO=None;
 	
 		
 
@@ -102,7 +103,7 @@ def _wgsToStr(coord):
 	else:
 		return str(int(coord))+ " " + str(int(abs(coord-int(coord))*60))
 		
-def splitOne(map_class, coord, format=PaperFormat.A4):
+def splitOne(map_class, coord, format=PaperFormat.NO):
 	m = map_class
 	map_image = m.getPath()
 
@@ -110,8 +111,12 @@ def splitOne(map_class, coord, format=PaperFormat.A4):
 	
 	xcoord = coord[0]
 	ycoord = coord[1]
-	formatWidth = format[0]*pixkil
-	formatHeight= format[1]*pixkil
+        if format is None:
+                formatWidth=int(m.width)
+                formatHeight=int(m.height)
+        else:
+                formatWidth = format[0]*pixkil
+                formatHeight= format[1]*pixkil
 	offset = 26
 	head = 80
 	wgsLeft = m.getWGS84Coord(xcoord,ycoord)
