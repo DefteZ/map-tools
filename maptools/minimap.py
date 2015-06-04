@@ -6,8 +6,8 @@ import gdal
 import osr
 import re
 import sys
-import Image, ImageDraw, ImageFont
-from   PIL.ExifTags import TAGS, GPSTAGS
+from PIL import Image, ImageDraw, ImageFont
+from PIL.ExifTags import TAGS, GPSTAGS
 import pygpx as GPX
 import datetime
 import image_operator

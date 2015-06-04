@@ -6,7 +6,7 @@ import gdal
 import osr
 import re
 import sys
-import Image, ImageDraw
+from PIL import Image, ImageDraw
 from PIL.ExifTags import TAGS, GPSTAGS
 import pyexiv2
 import pygpx as GPX

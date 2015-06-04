@@ -8,7 +8,7 @@ from osgeo import gdal
 import osr
 import re
 import sys
-import Image, ImageDraw
+from PIL import Image, ImageDraw
 from PIL.ExifTags import TAGS, GPSTAGS
 import pygpx as GPX
 import datetime
